@@ -1,6 +1,7 @@
 import * as types from '../constants/action_types';
 import utils from '../utils';
 import { encode } from 'polyline';
+import { getPathLength } from 'geolib';
 const request = new XMLHttpRequest();
 
 function originPoint(coordinates) {
@@ -121,9 +122,11 @@ function fetchDirections() {
 
       dispatch(setRouteIndex(0));
 
+      let distance = getPathLength(points);
+
       dispatch(setDirections([{
-        distance: 1234,
-        duration: 1234,
+        distance: distance,
+        duration: 1.39 / distance,
         geometry: encode(points),
         legs: [{
           distance: 0,

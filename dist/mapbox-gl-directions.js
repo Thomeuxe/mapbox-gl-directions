@@ -6270,14 +6270,22 @@ function fetchDirections() {
 
       points.push(destination.geometry.coordinates);
 
-      return {
+      dispatch(setError(null));
+
+      dispatch(setRouteIndex(0));
+
+      dispatch(setDirections([{
         distance: 1234,
         duration: 1234,
         geometry: (0, _polyline.encode)(points),
         legs: [],
         weight: 1234,
-        weight_name: "duration"
-      };
+        weight_name: 'duration'
+      }]));
+
+      // Revise origin / destination points
+      dispatch(originPoint(data.waypoints[0].location));
+      dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
     }
   };
 }

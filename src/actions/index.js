@@ -1,5 +1,6 @@
 import * as types from '../constants/action_types';
 import utils from '../utils';
+import { encode } from 'polyline';
 const request = new XMLHttpRequest();
 
 function originPoint(coordinates) {
@@ -50,52 +51,81 @@ function setHoverMarker(feature) {
   };
 }
 
+export function setManual(isManual) {
+  return {
+    type: types.MANUAL,
+    isManual: isManual
+  };
+}
+
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination } = getState();
+    const { api, accessToken, routeIndex, profile, alternatives, congestion, origin, destination, waypoints, isManual } = getState();
     // if there is no destination set, do not make request because it will fail
     if (!(destination && destination.geometry)) return;
 
     const query = buildDirectionsQuery(getState);
 
-    // Request params
-    var options = [];
-    options.push('geometries=polyline');
-    if (alternatives) options.push('alternatives=true');
-    if (congestion) options.push('annotations=congestion');
-    options.push('steps=true');
-    options.push('overview=full');
-    if (accessToken) options.push('access_token=' + accessToken);
-    request.abort();
-    request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
+    if(!isManual) {
+      // Request params
+      var options = [];
+      options.push('geometries=polyline');
+      if (alternatives) options.push('alternatives=true');
+      if (congestion) options.push('annotations=congestion');
+      options.push('steps=true');
+      options.push('overview=full');
+      if (accessToken) options.push('access_token=' + accessToken);
+      request.abort();
+      request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
 
-    request.onload = () => {
-      if (request.status >= 200 && request.status < 400) {
-        var data = JSON.parse(request.responseText);
-        if (data.error) {
+      request.onload = () => {
+        if (request.status >= 200 && request.status < 400) {
+          var data = JSON.parse(request.responseText);
+          if (data.error) {
+            dispatch(setDirections([]));
+            return dispatch(setError(data.error));
+          }
+
+          dispatch(setError(null));
+          if (!data.routes[routeIndex]) dispatch(setRouteIndex(0));
+          dispatch(setDirections(data.routes));
+
+          // Revise origin / destination points
+          dispatch(originPoint(data.waypoints[0].location));
+          dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
+        } else {
           dispatch(setDirections([]));
-          return dispatch(setError(data.error));
+          return dispatch(setError(JSON.parse(request.responseText).message));
         }
+      };
 
-        dispatch(setError(null));
-        if (!data.routes[routeIndex]) dispatch(setRouteIndex(0));
-        dispatch(setDirections(data.routes));
-
-        // Revise origin / destination points
-        dispatch(originPoint(data.waypoints[0].location));
-        dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
-      } else {
+      request.onerror = () => {
         dispatch(setDirections([]));
         return dispatch(setError(JSON.parse(request.responseText).message));
+      };
+
+      request.send();
+    } else {
+      let points = [];
+      points.push(origin.geometry.coordinates);
+
+      if (waypoints.length) {
+        waypoints.forEach((waypoint) => {
+          points.push(waypoint.geometry.coordinates);
+        });
       }
-    };
 
-    request.onerror = () => {
-      dispatch(setDirections([]));
-      return dispatch(setError(JSON.parse(request.responseText).message));
-    };
+      points.push(destination.geometry.coordinates);
 
-    request.send();
+      return {
+        distance: 1234,
+        duration: 1234,
+        geometry: polyline.encode(points),
+        legs: [],
+        weight: 1234,
+        weight_name: "duration"
+      };
+    }
   };
 }
 

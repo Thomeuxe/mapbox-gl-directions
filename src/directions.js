@@ -534,6 +534,16 @@ export default class MapboxDirections {
   }
 
   /**
+   * Set Automatic/Manual controls
+   * @param {Boolean} toggle manual control
+   * @returns {MapboxDirections} this;
+   */
+  setManual(setManual) {
+    this.actions.setManual(setManual);
+    return this;
+  }
+
+  /**
    * Subscribe to events that happen within the plugin.
    * @param {String} type name of event. Available events and the data passed into their respective event objects are:
    *

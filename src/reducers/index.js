@@ -41,7 +41,10 @@ const initialState = {
 
   // Directions data
   directions: [],
-  routeIndex: 0
+  routeIndex: 0,
+
+  // Automatic/Manual controls
+  isManual: false
 };
 
 function data(state = initialState, action) {
@@ -125,6 +128,11 @@ function data(state = initialState, action) {
   case types.ERROR:
     return Object.assign({}, state, {
       error: action.error
+    });
+
+  case types.MANUAL:
+    return Object.assign({}, state, {
+      manual: action.manual
     });
 
   default:

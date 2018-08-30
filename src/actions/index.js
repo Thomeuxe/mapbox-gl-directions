@@ -107,34 +107,58 @@ function fetchDirections() {
       request.send();
     } else {
       let points = [];
-      points.push(origin.geometry.coordinates);
+      points.push(origin.geometry.coordinates.reduce((ary, ele) => {ary.unshift(ele); return ary}, []));
 
       if (waypoints.length) {
-        waypoints.forEach((waypoint) => {
-          points.push(waypoint.geometry.coordinates);
+        waypoints.forEach(function (waypoint) {
+          points.push(waypoint.geometry.coordinates.reduce((ary, ele) => {ary.unshift(ele); return ary}, []));
         });
       }
 
-      points.push(destination.geometry.coordinates);
+      points.push(destination.geometry.coordinates.reduce((ary, ele) => {ary.unshift(ele); return ary}, []));
 
       dispatch(setError(null));
 
       dispatch(setRouteIndex(0));
 
-      dispatch(setDirections([
-        {
-          distance: 1234,
-          duration: 1234,
-          geometry: encode(points),
-          legs: [],
-          weight: 1234,
-          weight_name: 'duration'
-        }
-      ]));
+      dispatch(setDirections([{
+        distance: 1234,
+        duration: 1234,
+        geometry: encode(points),
+        legs: [{
+          distance: 0,
+          duration: 0,
+          steps: [{
+            distance: 0,
+            driving_side:'right',
+            duration: 0,
+            geometry:'',
+            intersections:[{
+              bearings: [0],
+              entry: [true],
+              location: [0, 0]
+            }],
+            maneuver: {
+              bearing_after: 0,
+              bearing_before: 0,
+              location: [0, 0],
+              type: 'depart',
+              instruction: ''
+            },
+            mode:'walking',
+            name:'',
+            weight:0,
+          }],
+          summary: '',
+          weight: 0
+        }],
+        weight: 1234,
+        weight_name: 'duration'
+      }]));
 
       // Revise origin / destination points
-      dispatch(originPoint(data.waypoints[0].location));
-      dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
+      dispatch(originPoint(origin.geometry.coordinates));
+      dispatch(destinationPoint(destination.geometry.coordinates));
     }
   };
 }

@@ -130,9 +130,9 @@ function data(state = initialState, action) {
       error: action.error
     });
 
-  case types.MANUAL:
+  case types.ISMANUAL:
     return Object.assign({}, state, {
-      manual: action.manual
+      isManual: action.isManual
     });
 
   default:

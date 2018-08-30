@@ -6194,7 +6194,7 @@ function setHoverMarker(feature) {
 
 function setManual(isManual) {
   return {
-    type: types.MANUAL,
+    type: types.ISMANUAL,
     isManual: isManual
   };
 }
@@ -6273,7 +6273,7 @@ function fetchDirections() {
       return {
         distance: 1234,
         duration: 1234,
-        geometry: polyline.encode(points),
+        geometry: (0, _polyline.encode)(points),
         legs: [],
         weight: 1234,
         weight_name: "duration"
@@ -6561,7 +6561,7 @@ var ORIGIN_FROM_COORDINATES = exports.ORIGIN_FROM_COORDINATES = 'ORIGIN_FROM_COO
 var ROUTE_INDEX = exports.ROUTE_INDEX = 'ROUTE_INDEX';
 var SET_OPTIONS = exports.SET_OPTIONS = 'SET_OPTIONS';
 var WAYPOINTS = exports.WAYPOINTS = 'WAYPOINTS';
-var MANUAL = exports.MANUAL = 'MANUAL';
+var ISMANUAL = exports.ISMANUAL = 'ISMANUAL';
 
 },{}],40:[function(require,module,exports){
 'use strict';
@@ -8187,9 +8187,9 @@ function data() {
         error: action.error
       });
 
-    case types.MANUAL:
+    case types.ISMANUAL:
       return Object.assign({}, state, {
-        manual: action.manual
+        isManual: action.isManual
       });
 
     default:

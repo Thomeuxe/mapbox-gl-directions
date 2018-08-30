@@ -53,7 +53,7 @@ function setHoverMarker(feature) {
 
 export function setManual(isManual) {
   return {
-    type: types.MANUAL,
+    type: types.ISMANUAL,
     isManual: isManual
   };
 }
@@ -120,7 +120,7 @@ function fetchDirections() {
       return {
         distance: 1234,
         duration: 1234,
-        geometry: polyline.encode(points),
+        geometry: encode(points),
         legs: [],
         weight: 1234,
         weight_name: "duration"

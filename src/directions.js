@@ -544,6 +544,14 @@ export default class MapboxDirections {
   }
 
   /**
+   * If is manual
+   * @returns {Boolean} isManual
+   */
+  getIsManual() {
+    return store.getState().isManual;
+  }
+
+  /**
    * Subscribe to events that happen within the plugin.
    * @param {String} type name of event. Available events and the data passed into their respective event objects are:
    *

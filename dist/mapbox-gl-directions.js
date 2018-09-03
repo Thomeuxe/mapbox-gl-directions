@@ -8376,16 +8376,7 @@ var Inputs = function () {
           origin = _store$getState2.origin,
           destination = _store$getState2.destination;
 
-      if (origin.geometry && destination.geometry && !(0, _lodash4.default)(origin.geometry, destination.geometry)) {
-
-        // Animate map to fit bounds.
-        var bb = (0, _turfExtent2.default)({
-          type: 'FeatureCollection',
-          features: [origin, destination]
-        });
-
-        this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
-      } else {
+      if (origin.geometry && destination.geometry && !(0, _lodash4.default)(origin.geometry, destination.geometry)) {} else {
         this._map.flyTo({ center: coords });
       }
     }

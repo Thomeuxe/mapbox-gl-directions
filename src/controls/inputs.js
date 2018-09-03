@@ -42,13 +42,6 @@ export default class Inputs {
         destination.geometry &&
         !isEqual(origin.geometry, destination.geometry)) {
 
-      // Animate map to fit bounds.
-      const bb = extent({
-        type: 'FeatureCollection',
-        features: [origin, destination]
-      });
-
-      this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
     } else {
       this._map.flyTo({ center: coords });
     }
